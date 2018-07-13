@@ -5,6 +5,145 @@
     <title>Twitter</title>
   </head>
   <body>
-    
+    <div class="error"></div>
+    <div class="logger_div">
+      <button type="button" name="button" id="logger" >Already signed up? login here</button>
+    </div>
+    <div class="signup">
+
+    <h1 class="StaticLoggedOutHomePage-signupTitle">Descubre lo que está pasando en el mundo en este momento</h1>
+
+      <input type="text" placeholder="User Id" aria-required="true" maxlength="10" id="uid" class="" name = "id"><br>
+      <input type="password" placeholder="Password" aria-required="true" id="upassword" name = "password"><br>
+      <input type="url" placeholder="Image link" name="imagen" id="avatar"><br>
+      <button type="button" name="signup" id="sign_up">Sign Up</button>
+
+   </div>
+   <div class="signin">
+
+     <input type="text" placeholder="User Id" aria-required="true" maxlength="10" id="id" class="" name = "id"><br>
+     <input type="password" placeholder="Password" aria-required="true" id="password" maxlength="20" name = "password"><br>
+     <button type="button" id="sign_in">Sign In</button>
+
+
+   </div>
+
+    <div class="post">
+
+        <input type="text" name="" value="" name = "tweet" id="tweetpost" maxlength="140"><br>
+        <button type="submit" name="button" id="post">Post</button>
+
+    </div>
+    <div class="tweets">
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    $(".post").hide();
+    $(".tweets").hide();
+    $(".signin").hide();
+
+    $("#sign_up").click(function(){
+    $.ajax({
+      url: 'http://192.168.100.43:1337/usuario',
+      type: 'POST',
+      data: {
+        username: $("#uid").val(),
+        password: $("#upassword").val(),
+        imagen: $("#avatar").val()
+      }
+    })
+    .done(function(){
+      $(".signup").hide();
+      $(".signin").show();
+    })
+    .fail(function(err){
+      if ($("#uid").val() && $("#upassword").val()) {
+        $("#uid").css("border-color", "red")
+      } else if (!$("#uid").val()) {
+        $("#id").css("border-color", "red")
+      }else if (!$("#upassword").val()) {
+        $("#upassword").css("border-color", "red")
+      }
+      $(".error").text(err.responseText);
+
+    })
+})
+
+    $("#submit_button").click(function(){
+      $(".tweets").show();
+    })
+    $("#post").click(function(){
+      $.ajax({
+        url: 'http://192.168.100.43:1337/tweet',
+        type: 'POST',
+        data: {mensaje: $("#tweetpost").val(),
+              likes: [],
+               creador: {
+                 username: $("#id").val(),
+               }
+        }
+      })
+      .done(function(){
+        $(".signup").hide();
+        $(".signin").hide();
+        $(".post").show();
+        $(".tweets").show();
+
+      })
+        .fail(function(err){
+          console.log(err);
+        });
+          $(".error").text(err.responseText);
+
+        })
+
+    $("#sign_in").click(function(){
+      $.ajax({
+        url: 'http://192.168.100.43:1337/login',
+        type: 'POST',
+        data: {
+                 username: $("#id").val(),
+                 password: $("#password").val()
+               }
+      })
+      .done(function(){
+        $(".signup").hide();
+        $(".signin").hide();
+        $(".post").show();
+        $(".tweets").show();
+      })
+        .fail(function(err){
+          console.log(err);
+        })
+          $(".error").text(err.responseText);
+
+        })
+
+
+
+          $.ajax({
+            url: 'http://192.168.100.43/tweets',
+            type: 'GET',
+
+          })
+          .done(function(msg){
+            $(".signup").hide();
+            $(".signin").hide();
+            $(".post").show();
+            $(".tweets").show();
+            $(".tweets").append(msg.mensaje)
+          })
+            .fail(function(err){
+              console.log(err);
+            })
+          $("#logger").click(function(){
+            $(".signin").show();
+            $(".signup").hide();
+            $(".logger_div").hide();
+          })
+    </script>
   </body>
 </html>
