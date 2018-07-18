@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>Twitter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
   </head>
   <body>
     <div class="error"></div>
@@ -21,8 +23,8 @@
    </div>
    <div class="signin">
 
-     <input type="text" placeholder="User Id" aria-required="true" maxlength="10" id="id" class="" name = "id"><br>
-     <input type="password" placeholder="Password" aria-required="true" id="password" maxlength="20" name = "password"><br>
+     <input type="text" value="roshan" placeholder="User Id" aria-required="true" maxlength="10" id="id" class="" name = "id"><br>
+     <input type="password" value="12345" placeholder="Password" aria-required="true" id="password" maxlength="20" name = "password"><br>
      <button type="button" id="sign_in">Sign In</button>
 
 
@@ -30,13 +32,19 @@
 
     <div class="post">
 
-        <input type="text" name="" value="" name = "tweet" id="tweetpost" maxlength="140"><br>
-        <button type="submit" name="button" id="post">Post</button>
+        <input type="text" name="" value="" name = "tweet" id="tweetpost" maxlength="140"><span id="contador"></span><br>
+        <button type="button" name="button" id="post">Tweet</button>
 
     </div>
+
     <div class="tweets">
 
     </div>
+
+
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
@@ -47,7 +55,7 @@
 
     $("#sign_up").click(function(){
     $.ajax({
-      url: 'http://192.168.100.43:1337/usuario',
+      url: 'http://192.168.100.52:1337/usuario',
       type: 'POST',
       data: {
         username: $("#uid").val(),
@@ -75,75 +83,140 @@
     $("#submit_button").click(function(){
       $(".tweets").show();
     })
-    $("#post").click(function(){
+
+
+
+      $("#sign_in").click(function(){
       $.ajax({
-        url: 'http://192.168.100.43:1337/tweet',
-        type: 'POST',
-        data: {mensaje: $("#tweetpost").val(),
-              likes: [],
-               creador: {
-                 username: $("#id").val(),
-               }
-        }
-      })
-      .done(function(){
-        $(".signup").hide();
-        $(".signin").hide();
-        $(".post").show();
-        $(".tweets").show();
-
-      })
-        .fail(function(err){
-          console.log(err);
-        });
-          $(".error").text(err.responseText);
-
-        })
-
-    $("#sign_in").click(function(){
-      $.ajax({
-        url: 'http://192.168.100.43:1337/login',
+        url: 'http://192.168.100.52:1337/login',
         type: 'POST',
         data: {
                  username: $("#id").val(),
                  password: $("#password").val()
                }
       })
-      .done(function(){
-        $(".signup").hide();
-        $(".signin").hide();
-        $(".post").show();
-        $(".tweets").show();
-      })
+      .done(iniciar)
         .fail(function(err){
           console.log(err);
-        })
           $(".error").text(err.responseText);
 
         })
 
-
-
-          $.ajax({
-            url: 'http://192.168.100.43/tweets',
-            type: 'GET',
-
+        })
+    function iniciar(usuario){
+      $(".signup").hide();
+      $(".signin").hide();
+      $(".post").show();
+      $(".tweets").show();
+      $.ajax({
+          url: 'http://192.168.100.52:1337/tweets',
+          type: 'GET',
+        })
+        .done(function(tweets){
+          tweets.forEach(function(e){
+            $(".tweets").append("<div class='card text-center' style='width: 18rem;'><div class='card-body' data-id='" + e.id + "' class='posttheme'>"+"<h2 class='card-title'>"+e.creador.username+"</h2>"+"<img style='max-width:50px;' src="+ "'" + e.creador.imagen + "'" + "<h2 class='card-text'>"+e.mensaje +"</h2>"+ "<br>"+"likes: "+e.likes.length+"<button class='btn btn-primary like_button'>Like</button>"+"<br>"+ "</div>"+"</div>"+"</div>")
+            console.log(e);
           })
-          .done(function(msg){
-            $(".signup").hide();
-            $(".signin").hide();
-            $(".post").show();
-            $(".tweets").show();
-            $(".tweets").append(msg.mensaje)
+        })
+          .fail(function(err){
+            console.log(err);
           })
-            .fail(function(err){
-              console.log(err);
+
+          $("#post").click(function(){
+            $.ajax({
+              url: 'http://192.168.100.52:1337/tweet',
+              type: 'POST',
+              data: {
+                     mensaje: $("#tweetpost").val(),
+                     usuario: usuario.id,
+                    }
+            }).done(function(tweet){
+              $(".tweets").preappend("<div class='posttheme'>"+"<h2>"+tweet.creador.username+"</h2>"+"<img style='max-width:50px;' src="+ "'" + tweet.creador.imagen + "'" + "<h2>"+tweet.mensaje +"</h2>"+ "<br>"+"likes: "+tweet.likes.length+"<button class='dislike_button'>Dislike</button>"+ "<button class='like_button'>Like</button>"+ "<br>"+"<br>"+ "</div>")
+
+
+            }).fail(function(err){
+                console.log(err);
+                $(".error").text(err.statusText);
             })
+          });
+
+          $(document).on('click', ".like_button",function(event){
+            var id = $(event.currentTarget).parent('div').data('id');
+            $.ajax({
+              url: 'http://192.168.100.52:1337/like/'+ id,
+              type: 'PUT',
+              data: {
+                       usuario: usuario.id
+                     }
+            })
+            .done(function(){
+              $(event.currentTarget).parent('div').classList.toggle("dislike_button");
+              console.log('TODO -> Add one to the likes counter')
+            })
+              .fail(function(err){
+                console.log(err);
+
+              })
+
+          })
+          $(document).on('click', ".dislike_button",function(event){
+            var id = $(event.currentTarget).parent('div').data('id');
+            $.ajax({
+              url: 'http://192.168.100.52:1337/dislike/'+ id,
+              type: 'PUT',
+              data: {
+                       usuario: usuario.id
+                     }
+            })
+            .done(function(){
+              $(event.currentTarget).parent('div').classList.toggle("like_button");
+              console.log('TODO -> successfully unliked the tweet!')
+            })
+              .fail(function(err){
+                console.log(err);
+
+              })
+
+          })
+
+
+        }
+
+
+
           $("#logger").click(function(){
             $(".signin").show();
-            $(".signup").hide();
-            $(".logger_div").hide();
+              $(".signup").hide();
+                $(".logger_div").hide();
           })
+
+          $('#logger').trigger('click');
+          $('#sign_in').trigger('click');
+
+        var max = 140;
+         $('#contador').html(max + ' remaining');
+
+        $('#tweetpost').keyup(function() {
+        var length = $('#tweetpost').val().length;
+        var remaining = max - length;
+        $('#contador').html(remaining + ' remaining');
+});
+
+        $.ajax({
+          var id = $(event.currentTarget).parent('div').data('id');
+          url: 'http://192.168.100.52:1337/delete/tweet'+ id,
+          type: 'DELETE',
+          data: {
+                  id: id,
+                  usuario: usuario.id,
+                }
+        }).done(function(tweet){
+        console.log("Delete done!");
+
+        }).fail(function(err){
+            console.log(err);
+            $(".error").text(err.statusText);
+        })
     </script>
   </body>
 </html>
