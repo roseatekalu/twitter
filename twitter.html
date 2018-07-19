@@ -55,7 +55,7 @@
 
     $("#sign_up").click(function(){
     $.ajax({
-      url: 'http://192.168.100.52:1337/usuario',
+      url: 'http://192.168.100.31:1337/usuario',
       type: 'POST',
       data: {
         username: $("#uid").val(),
@@ -88,7 +88,7 @@
 
       $("#sign_in").click(function(){
       $.ajax({
-        url: 'http://192.168.100.52:1337/login',
+        url: 'http://192.168.100.31:1337/login',
         type: 'POST',
         data: {
                  username: $("#id").val(),
@@ -109,7 +109,7 @@
       $(".post").show();
       $(".tweets").show();
       $.ajax({
-          url: 'http://192.168.100.52:1337/tweets',
+          url: 'http://192.168.100.31:1337/tweets',
           type: 'GET',
         })
         .done(function(tweets){
@@ -124,7 +124,7 @@
 
           $("#post").click(function(){
             $.ajax({
-              url: 'http://192.168.100.52:1337/tweet',
+              url: 'http://192.168.100.31:1337/tweet',
               type: 'POST',
               data: {
                      mensaje: $("#tweetpost").val(),
@@ -143,7 +143,7 @@
           $(document).on('click', ".like_button",function(event){
             var id = $(event.currentTarget).parent('div').data('id');
             $.ajax({
-              url: 'http://192.168.100.52:1337/like/'+ id,
+              url: 'http://192.168.100.31:1337/like/'+ id,
               type: 'PUT',
               data: {
                        usuario: usuario.id
@@ -162,7 +162,7 @@
           $(document).on('click', ".dislike_button",function(event){
             var id = $(event.currentTarget).parent('div').data('id');
             $.ajax({
-              url: 'http://192.168.100.52:1337/dislike/'+ id,
+              url: 'http://192.168.100.31:1337/dislike/'+ id,
               type: 'PUT',
               data: {
                        usuario: usuario.id
@@ -202,21 +202,21 @@
         $('#contador').html(remaining + ' remaining');
 });
 
-        $.ajax({
-          var id = $(event.currentTarget).parent('div').data('id');
-          url: 'http://192.168.100.52:1337/delete/tweet'+ id,
-          type: 'DELETE',
-          data: {
-                  id: id,
-                  usuario: usuario.id,
-                }
-        }).done(function(tweet){
-        console.log("Delete done!");
-
-        }).fail(function(err){
-            console.log(err);
-            $(".error").text(err.statusText);
-        })
+        // $.ajax({
+        //   var id = $(event.currentTarget).parent('div').data('id');
+        //   url: 'http://192.168.100.31:1337/delete/tweet'+ id,
+        //   type: 'DELETE',
+        //   data: {
+        //           id: id,
+        //           usuario: usuario.id,
+        //         }
+        // }).done(function(tweet){
+        // console.log("Delete done!");
+        //
+        // }).fail(function(err){
+        //     console.log(err);
+        //     $(".error").text(err.statusText);
+        // })
     </script>
   </body>
 </html>
