@@ -28,6 +28,8 @@
 <div class="moreTweets">
 
 </div>
+<p>
+</p>
 
     </center>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
@@ -40,7 +42,7 @@
           $(".moreTweets").html("");
           $("input.search").val("")
             $.ajax({
-              url:"http://192.168.100.31:1337/usuario/"+usuario,
+              url:"http://192.168.100.26:1337/usuario/"+usuario,
               type:"GET",
               data:{
               usuario: usuario,
@@ -49,7 +51,7 @@
           console.log(tweets);
         $("div.card-header").text(tweets.username);
         $("#main").attr("src",tweets.imagen);
-        $("h5.card-title").html("<button id='tweets_button'>"+tweets.tweets.length+" Tweets"+"<button>"+" "+"<button id='likes_button'>"+tweets.likes.length+" Likes"+"<button>");
+        $("h5.card-title").html("<span>"+tweets.descripcion+"</span>"+"<br>"+"<button id='tweets_button'>"+tweets.tweets.length+" Tweets"+"</button>"+" "+"<button id='likes_button'>"+tweets.likes.length+" Likes"+"</button>"+"<button id='edit' >edit</button>");
 
         $("#likes_button").click(function(){
             $(".moreTweets").html("");
@@ -67,11 +69,41 @@
            console.log(err);
            $(".error").text(err.statusText);
        })
+
+
   }
+
+});
+    $(document).on("click","#guardar",function(){
+
+      var id = 8;
+      $.ajax({
+        url: "http://192.168.100.26:1337/usuario/" + id,
+        type : "PUT",
+        data:{
+          username : $("#id").val(),
+          descripcion : $("#Decription").val(),
+          imagen : $("#foto").val(),
+        },
+      }).done({
+function (){
+  $("div").css("display","block");
+  $("p").css("display","none");
+  console.log("all done!");
+}
+      })
+    });
+
+$(document).on("click","#edit",function(){
+  $("p").css("display","block");
+  $("div").css("display","none");
+  $("p").html("<h2>"+"Modify your details"+"</h2>"+"<br>"+"<button id='atras'>Atras</button>"+"<br>"+"username: "+"<input id= 'id'>"+"<br>"+"Decription: "+"<input id= 'Decription'>"+"<br>"+"Foto: "+"<input id= 'foto'>"+"<br>"+"<button id='guardar'>Guardar</button>")
 });
 
-
-
+$(document).on("click","#atras",function(){
+  $("div").css("display","block");
+  $("p").css("display","none");
+})
     </script>
   </body>
 </html>
